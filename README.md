@@ -1,19 +1,21 @@
-#Full Stack Dev test
+# Full Stack Dev test
+As part of an interview with SmartHop, a tehcnical assesment is taken an below are the requirements of the deliverable, being this repo also part of it.
+
+## Goal
 
 The goal is to show a in a web view the avaiability of each location of City Bikes in Miami FL stations. For this project we will be using NodeJS / Socket IO / React and LeafLet Maps. For the data we are extracting availability from https://citybik.es/ to build the app.
 
-##Objective 
+## Objective 
 
 - Complete the code to show in map via socket.io the availability of bikes at each station.
-- Generate a PR to submit your code. 
 
-##Requirements (Node Modules)
+## Requirements (Node Modules)
 
 - Nodejs & NPM
 - Express.js / Socket IO / Axios
 - React / React-Leaflet
 
-##Folder Structure
+## Folder Structure
 
 There are two parts for the web app:
 
@@ -31,7 +33,7 @@ Then run the client app
 
 That is the client React Application to start :
 
-`npm strat`
+`npm start`
 
 
 
