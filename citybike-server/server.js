@@ -2,7 +2,12 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const config = require('./config');
-const connectionSocket = require('./Sockets');
+const { 
+  BIKE_FETCH_SECONDS,
+  Event,
+  EventHandler,
+  connectionSocket
+} = require('./Sockets');
 
 const port = config.port;
 const index = require("./routes/index");
@@ -16,5 +21,13 @@ const io = socketIo(server, {
 });
 
 io.on("connection", connectionSocket);
+
+const lastResponse = { data: null };
+setInterval(() => 
+  EventHandler[Event.BikeData](io, Event.BikeData, lastResponse),
+  BIKE_FETCH_SECONDS
+);
+
+// io.to('bike data room').emit('current date', new Date());
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

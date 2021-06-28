@@ -1,4 +1,3 @@
-module.exports = interval => {
-  clearInterval(interval);
-  console.log("Client disconnected");
+module.exports = socket => {
+  console.log(`Client disconnected ${socket.id}`);
 };
