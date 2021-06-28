@@ -12,3 +12,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.map-title-container {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255,0.8);
+  padding: 0.5rem;
+  box-shadow: 2px 2px 12px rgba(0,0,0,0.2);
+  border-bottom-right-radius: 0.5rem;
+}
+
+.map-title {
+  margin: 0;  
+}
+
+.author {
+  font-size: 1rem;
+  margin: 0;
+  text-align: right;
+}
