@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Map, TileLayer, ZoomControl } from 'react-leaflet';
 import { InitialValues, SocketEvent, MAP_LAYER_URL } from './enums';
 import { getAvailableBikes } from '../../API/Socket/BikesAPI';
@@ -41,7 +41,7 @@ class MapView extends Component {
 
   render() {
     return (
-      <div className="map">
+      <Fragment>
         <MapTitle />
         {!this.state.stations && <p>Cargando datos</p>}
         {this.state.stations && (
@@ -50,6 +50,7 @@ class MapView extends Component {
             zoom={this.state.zoom}
             zoomControl={false}
             onzoomend={this.setZoomLevel}
+            className="map-container"
           >
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -61,7 +62,7 @@ class MapView extends Component {
           ))}
         </Map>
         )}
-      </div>
+      </Fragment>  
     );
   }
 }
