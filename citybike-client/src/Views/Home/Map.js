@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Map, TileLayer, ZoomControl } from 'react-leaflet';
 import { InitialValues, SocketEvent, MAP_LAYER_URL } from './enums';
 import { getAvailableBikes } from '../../API/Socket/BikesAPI';
-import MapTitle from './MapTitle';
 import BikeStation from './BikeStation';
+import LoadingScreen from './LoadingScreen';
 
 class MapView extends Component {
   constructor() {
@@ -42,8 +42,7 @@ class MapView extends Component {
   render() {
     return (
       <Fragment>
-        <MapTitle />
-        {!this.state.stations && <p>Cargando datos</p>}
+        {!this.state.stations && <LoadingScreen message="Loading data"/>}
         {this.state.stations && (
           <Map
             center={InitialValues.Position}
@@ -56,7 +55,7 @@ class MapView extends Component {
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url={MAP_LAYER_URL}
           />
-          <ZoomControl position="bottomleft"/>
+          <ZoomControl position="bottomright"/>
           {this.state.stations.map(({ position, status }, index) => (
             <BikeStation key={index} position={position} status={status}/>
           ))}
