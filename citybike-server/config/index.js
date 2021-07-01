@@ -8,7 +8,8 @@ module.exports = {
   },
   api: {
     cityBik: {
-        url: 'http://api.citybik.es/v2/networks/citi-bike-nyc'
+        url: 'http://api.citybik.es/v2/networks/decobike-miami-beach',
+        cacheSize: 10
     }
   },
   socket: {

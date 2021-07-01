@@ -1,54 +1,68 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { Map, TileLayer, ZoomControl } from 'react-leaflet';
-import { InitialValues, SocketEvent, MAP_LAYER_URL } from './enums';
-import { getAvailableBikes } from '../../API/Socket/BikesAPI';
+
+
 import BikeStation from './BikeStation';
 import LoadingScreen from './LoadingScreen';
+import TimeLine from './TimeLine';
 
-class MapView extends Component {
-  constructor() {
-    super();
+import { InitialValues, SocketEvent, MAP_LAYER_URL } from './enums';
+import { getAvailableBikes } from '../../API/Socket/BikesAPI';
 
-    this.state = {
-      stations: null,
-      zoom: InitialValues.MapZoom
-    };
+const MapView = () => {
+  // * STATES
+  const [recentUpdates, setRecentUpdates] = useState(null);
+  const [zoom, setZoom] = useState(InitialValues.MapZoom);
+  const [selected, setSelected] = useState(0);
 
-    this.setLocationsData = this.setLocationsData.bind(this);
-    this.setZoomLevel = this.setZoomLevel.bind(this);
-  }
+  const socket = getAvailableBikes;
 
-  setLocationsData(data) {
-    if (data.highlights > 0 || !this.state.stations) {
-      console.log('render', data);
-      this.setState({ ...this.state, stations: data.stations });
-    }
-  }
+  useEffect(() => {
+    socket.on(SocketEvent.BikeData, data => {
+      if (data.highlights > 0 || !recentUpdates) {
+        setRecentUpdates(data.recentUpdates);
+        setSelected(data.recentUpdates.length - 1);
+      }
+    });
 
-  setZoomLevel(e) {
-    this.setState({...this.state, zoom: e.target._zoom})
-  }
+    return () => socket.off(SocketEvent.BikeData);
+  }, [socket, recentUpdates]);
 
-  componentDidMount() {
-    this.socket = getAvailableBikes;
+  const setZoomLevel = e => setZoom(e.target._zoom);
 
-    this.socket.on(SocketEvent.BikeData, this.setLocationsData);
-  }
+  const handleLeftClick = useCallback(() => {
+    setSelected(previousValue => {
+      if(previousValue > 0) {
+        return previousValue - 1;
+      }
+    })
+  }, []);
 
-  componentWillUnmount() {
-    this.socket.off(SocketEvent.BikeData);
-  }
+  const handleRightClick = useCallback(() => {
+    setSelected(previousValue => {
+      if(previousValue < recentUpdates.length - 1) {
+        return previousValue + 1;
+      }
+    })
+  }, [recentUpdates]);
 
-  render() {
-    return (
-      <Fragment>
-        {!this.state.stations && <LoadingScreen message="Loading data"/>}
-        {this.state.stations && (
+  return (
+    <Fragment>
+        {!recentUpdates && <LoadingScreen message="Loading data"/>}
+        {recentUpdates && (
+          <TimeLine
+            dateTime={recentUpdates[selected].date}
+            onLeftClick={handleLeftClick}
+            onRightClick={handleRightClick}
+            selected={selected}
+            size={recentUpdates.length - 1}
+          />)}
+        {recentUpdates && (
           <Map
             center={InitialValues.Position}
-            zoom={this.state.zoom}
+            zoom={zoom}
             zoomControl={false}
-            onzoomend={this.setZoomLevel}
+            onzoomend={setZoomLevel}
             className="map-container"
           >
           <TileLayer
@@ -56,14 +70,13 @@ class MapView extends Component {
             url={MAP_LAYER_URL}
           />
           <ZoomControl position="bottomright"/>
-          {this.state.stations.map(({ position, status }, index) => (
-            <BikeStation key={index} position={position} status={status}/>
+          {recentUpdates[selected].data.map(({ position, status }, index) => (
+            <BikeStation key={`${index}-${status}`} position={position} status={status}/>
           ))}
         </Map>
         )}
       </Fragment>  
-    );
-  }
-}
+  );
+};
 
 export default MapView;

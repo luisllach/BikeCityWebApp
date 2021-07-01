@@ -1,4 +1,7 @@
+const config = require('../../config');
 const getMiamiAvailableBikes = require("../../API/CityBik/getMiamiAvailableBikes");
+
+const CACHE_SIZE = config.api.cityBik.cacheSize;
 
 const Status = {
   Empty: 'empty',
@@ -57,6 +60,33 @@ const processBikesData = (data, oldData) => {
   return bikesData;
 };
 
+const getUTCDate = () => {
+  const date = new Date(); 
+  const to_utc =  Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  );
+
+  return new Date(to_utc).toISOString();
+};
+
+const addItemToRecentUpdatesQueue = (recentUpdates, newResponse) => {
+  const date = getUTCDate();
+
+  if (recentUpdates.length === CACHE_SIZE) {
+    recentUpdates.shift();
+  }
+
+  recentUpdates.push({
+    date,
+    data: newResponse.slice()
+  });
+};
+
 module.exports = async (io, event, lastResponse) => {
   const response = await getMiamiAvailableBikes();
 
@@ -68,8 +98,10 @@ module.exports = async (io, event, lastResponse) => {
     if (!lastResponse.data) {
       lastResponse.data = newResponse;
 
+      addItemToRecentUpdatesQueue(lastResponse.recentUpdates, arrayResponse);
+
       io.emit(event, {
-        stations: arrayResponse,
+        recentUpdates: lastResponse.recentUpdates,
         highlights: arrayResponse.length
       });
     } else {
@@ -78,8 +110,12 @@ module.exports = async (io, event, lastResponse) => {
       const highlightValues = arrayResponse.filter(value => value.highlight)
       console.log(new Date(), highlightValues.length);
 
+      if (highlightValues.length > 0) {
+        addItemToRecentUpdatesQueue(lastResponse.recentUpdates, arrayResponse);
+      }
+
       io.emit(event, {
-        stations: arrayResponse,
+        recentUpdates: lastResponse.recentUpdates,
         highlights: highlightValues.length
       });
     }

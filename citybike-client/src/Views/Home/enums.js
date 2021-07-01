@@ -2,9 +2,9 @@ export const MAP_LAYER_URL = process.env.REACT_APP_TILE_LAYER_URL;
 
 export const InitialValues = {
   // Miami Beach
-  // Position: { lat: 25.790654, lng: -80.1300455 },
+  Position: { lat: 25.790654, lng: -80.1300455 },
   // New York
-  Position: { lat: 40.7143528, lng: -74.00597309999999 },
+  // Position: { lat: 40.7143528, lng: -74.00597309999999 },
   MapZoom: 12
 };
 

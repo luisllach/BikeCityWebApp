@@ -22,7 +22,7 @@ const io = socketIo(server, {
 
 io.on("connection", connectionSocket);
 
-const lastResponse = { data: null };
+const lastResponse = { data: null, recentUpdates: [] };
 setInterval(() => 
   EventHandler[Event.BikeData](io, Event.BikeData, lastResponse),
   BIKE_FETCH_SECONDS
