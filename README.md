@@ -11,7 +11,7 @@ The goal is to show a in a web view the avaiability of each location of City Bik
 
 ## Requirements (Node Modules)
 
-- Nodejs & NPM
+- Nodejs & Yarn
 - Express.js / Socket IO / Axios
 - React / React-Leaflet
 
@@ -25,7 +25,7 @@ The server
 
 This is the node socket.io Server app to start :
 
-`node server.js`
+`yarn start`
 
 Then run the client app
 
@@ -33,7 +33,7 @@ Then run the client app
 
 That is the client React Application to start :
 
-`npm start`
+`yarn start`
 
 
 
